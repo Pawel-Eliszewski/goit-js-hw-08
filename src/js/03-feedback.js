@@ -1,36 +1,32 @@
+import throttle from 'lodash.throttle';
+
 const form = document.querySelector('.feedback-form');
+const email = document.querySelector('input');
+const message = document.querySelector('textarea');
 
 regainInputs();
-form.addEventListener('input', _.throttle(saveInputs), 500);
-form.addEventListener('submit', submitInputs);
+form.addEventListener(
+  'input',
+  throttle(e => {
+    e.preventDefault();
+    const INPUTS = { email: email.value, message: message.value };
+    const setInputsJSON = JSON.stringify(INPUTS);
+    localStorage.setItem('feedback-form-state', setInputsJSON);
 
-function saveInputs(event) {
-  event.preventDefault();
-  const email = document.querySelector('input');
-  const text = document.querySelector('textarea');
-  const INPUTS = [email.value, text.value];
-  const inputsJSON = JSON.stringify(INPUTS);
-  localStorage.setItem('feedback-form-state', inputsJSON);
-}
+    onsubmit = e => {
+      e.preventDefault();
+      form.reset();
+      console.log(INPUTS);
+      localStorage.clear();
+    };
+  }, 500)
+);
 
 function regainInputs() {
-  const email = document.querySelector('input');
-  const text = document.querySelector('textarea');
-  const INPUTS = [email.value, text.value];
-  const inputsJSON = localStorage.getItem('feedback-form-state');
-  if (inputsJSON !== null) {
-    const outputsJSON = JSON.parse(inputsJSON);
-    email.value = outputsJSON[0] || '';
-    text.value = outputsJSON[1] || '';
+  const getInputsJSON = localStorage.getItem('feedback-form-state');
+  if (getInputsJSON !== null) {
+    const outputsJSON = JSON.parse(getInputsJSON);
+    email.value = outputsJSON.email || '';
+    message.value = outputsJSON.message || '';
   }
-}
-
-function submitInputs(event) {
-  event.preventDefault();
-  const email = document.querySelector('input');
-  const text = document.querySelector('textarea');
-  const INPUTS = [email.value, text.value];
-  console.log(INPUTS);
-  form.reset();
-  localStorage.clear();
 }
