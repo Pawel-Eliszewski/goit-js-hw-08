@@ -12,15 +12,19 @@ form.addEventListener(
     const INPUTS = { email: email.value, message: message.value };
     const setInputsJSON = JSON.stringify(INPUTS);
     localStorage.setItem('feedback-form-state', setInputsJSON);
-
-    onsubmit = e => {
-      e.preventDefault();
-      form.reset();
-      console.log(INPUTS);
-      localStorage.clear();
-    };
   }, 500)
 );
+
+form.addEventListener('submit', e => {
+  e.preventDefault();
+  onsubmit = e => {
+    e.preventDefault();
+    const INPUTS = { email: email.value, message: message.value };
+    console.log(INPUTS);
+    form.reset();
+    localStorage.clear();
+  };
+});
 
 function regainInputs() {
   const getInputsJSON = localStorage.getItem('feedback-form-state');
